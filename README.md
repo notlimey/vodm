@@ -38,3 +38,19 @@ chmod +x bin/install.sh
 
 # Run installation
 ./bin/install.sh
+```
+
+## Passing text file
+```bash
+vodm -c all_urls.txt
+```
+
+## Concurrent installation
+Using the `-c` flag triggers concurrent downloads. you can increase and decrease the amount of workers by using the flag `-l 5`.
+
+```bash
+vodm -c https://videos.pexels.com/video-files/29538074/12714837_360_640_60fps.mp4 https://videos.pexels.com/video-files/30075744/12899829_640_360_30fps.mp4 https://videos.pexels.com/video-files/6788661/6788661-sd_640_360_25fps.mp4
+```
+
+## Output
+Use the `-o /path` argument to output the files to other destinations
