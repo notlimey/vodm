@@ -22,3 +22,18 @@ vodm
 ```
 
 ****
+
+## Installation
+
+### macOS (M1/Intel)
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/vodm.git
+cd vodm
+
+# Make install script executable
+chmod +x bin/install.sh
+
+# Run installation
+./bin/install.sh
