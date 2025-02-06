@@ -23,6 +23,14 @@ func ArgumentIsFile(arg string) bool {
 	return strings.HasSuffix(arg, ".txt") && IsFile(arg)
 }
 
+func IsFile(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return !info.IsDir()
+}
+
 func readURLsFromFile(filename string) ([]string, error) {
 	content, err := os.ReadFile(filename)
 	if err != nil {

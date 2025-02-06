@@ -25,7 +25,7 @@ func ParseArguments(args []string) Arguments {
 			nextArg = args[i+1]
 		}
 
-		isFile := file.IsFile(arg)
+		isFile := file.ArgumentIsFile(arg)
 		if isFile {
 			fileUrls := file.GetUrlsFromFile(arg)
 			urls = append(urls, fileUrls...)
