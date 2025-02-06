@@ -18,8 +18,18 @@ func main() {
 
 	args := arguments.ParseArguments(os.Args[1:])
 
+	numWorkers := 3 // Default number of workers
+	if args.Flags.Concurrent {
+		if args.Flags.Limit > 0 {
+			numWorkers = args.Flags.Limit
+		}
+	}
+
 	if args.Flags.Concurrent {
 		fmt.Println("Using concurrent downloads")
+
+		downloader.DownloadWithWorkers(args.Urls, numWorkers)
+		os.Exit(0)
 	}
 
 	for _, url := range args.Urls {
