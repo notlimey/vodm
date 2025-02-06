@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/schollz/progressbar/v3"
 	"io"
 	"net/http"
 	"os"
@@ -9,56 +10,74 @@ import (
 )
 
 func main() {
-	// Check if URLs were provided
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: vodm URL1 [URL2...]")
-		fmt.Println("Example: vodm https://example.com/file.mp4")
+		fmt.Println("Example: vodm https://example.com/video.mp4")
 		os.Exit(1)
 	}
 
-	// Get URLs from command line arguments (skip program name at os.Args[0])
 	urls := os.Args[1:]
 
-	// Process each URL
 	for _, url := range urls {
-		fmt.Printf("Downloading: %s\n", url)
+		fmt.Printf("Processing link: %s\n", url)
 
-		// Get filename from URL
 		filename := filepath.Base(url)
-
-		// Download the file
 		err := downloadFile(filename, url)
 		if err != nil {
-			fmt.Printf("Error downloading %s: %v\n", url, err)
+			fmt.Printf("❌ Error downloading %s: %v\n", url, err)
 			continue
 		}
 
-		fmt.Printf("Successfully downloaded: %s\n", filename)
+		fmt.Printf("✅ Successfully downloaded: %s\n\n", filename)
 	}
 }
 
 func downloadFile(filename string, url string) error {
-	// Create the file
 	out, err := os.Create(filename)
 	if err != nil {
 		return fmt.Errorf("could not create file: %v", err)
 	}
 	defer out.Close()
 
-	// Get the data
-	resp, err := http.Get(url)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return fmt.Errorf("could not create request: %v", err)
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("could not download file: %v", err)
 	}
 	defer resp.Body.Close()
 
-	// Check server response
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("bad status: %s", resp.Status)
 	}
 
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
+	bar := progressbar.NewOptions(
+		int(resp.ContentLength),
+		progressbar.OptionSetDescription(filename),
+		progressbar.OptionSetWidth(15),
+		progressbar.OptionShowBytes(true),
+		progressbar.OptionSetTheme(progressbar.Theme{
+			Saucer:        "=",
+			SaucerHead:    ">",
+			SaucerPadding: " ",
+			BarStart:      "[",
+			BarEnd:        "]",
+		}),
+		progressbar.OptionOnCompletion(func() {
+			fmt.Println()
+		}),
+		progressbar.OptionShowCount(),
+		progressbar.OptionSpinnerType(14),
+		progressbar.OptionFullWidth(),
+	)
+
+	_, err = io.Copy(io.MultiWriter(out, bar), resp.Body)
 	if err != nil {
 		return fmt.Errorf("could not write to file: %v", err)
 	}
