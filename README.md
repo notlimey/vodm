@@ -2,6 +2,7 @@
 
 Working on [3steps](https://3steps.no) We often need to analyze plenty of handball matches. Therefore, we need to download plenty of handball matches. This tool lets us download several matches at once and doesn't use up all the computer's resources so that we can still work while using it.
 
+![Screenshot 2025-02-06 at 20 49 17](https://github.com/user-attachments/assets/12f3f8fe-a77a-4761-9a62-572ead9ea66f)
 
 
 ## Usage
